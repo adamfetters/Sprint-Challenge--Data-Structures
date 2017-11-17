@@ -1,42 +1,11 @@
 // A special array class that can only store the number of items specified by the `limit` argument
 class LimitedArray {
   constructor(limit) {
-    this.nodeCount = 0;
     // You should not be directly accessing this array from your hash table methods
     // Use the getter and setter methods included in this class to manipulate data in this class
-    this.head = null;
-    this.tail = null;
+    this.storage = [];
     this.limit = limit;
   }
-
-  addNode(key, value) {
-    this.nodeCount++;
-    const newNode = {
-      key,
-      value,
-      next: null
-    };
-
-    if (!this.head) {
-      this.head = newNode;
-      this.tail = newNode;
-    } else {
-      this.tail.next = newNode;
-      this.tail = newNode;
-    }
-  }
-
-  retrieveNode(key) {
-    let currentNode = this.head;
-    const nodeCheck = () => {
-      if (currentNode.key === key) return currentNode.value;
-      if (currentNode.next === null) return;
-      currentNode = currentNode.next;
-      return nodeCheck();
-    };
-    return nodeCheck();
-  }
-
 
   checkLimit(index) {
     if (typeof index !== 'number') throw new Error('The supplied index needs to be a number');
@@ -55,7 +24,6 @@ class LimitedArray {
     this.checkLimit(index);
     return this.storage[index];
   }
-
 
   get length() {
     return this.storage.length;

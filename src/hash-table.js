@@ -23,9 +23,7 @@ class HashTable {
 
   capacityIsFull() {
     let fullCells = 0;
-    this.storage.each((bucket) => {
-      if (bucket !== undefined) fullCells++;
-    });
+    if (this.nodeCount > 0) fullCells++;
     return fullCells / this.limit >= 0.75;
   }
 
@@ -34,39 +32,31 @@ class HashTable {
   // If no bucket has been created for that index, instantiate a new bucket and add the key, value pair to that new bucket
   // If the key already exists in the bucket, the newer value should overwrite the older value associated with that key
   insert(key, value) {
-    if (this.capacityIsFull()) this.resize();
+    // if (this.capacityIsFull()) this.resize();
     const index = getIndexBelowMax(key.toString(), this.limit);
-    let bucket = this.storage.get(index) || [];
-
-    bucket = bucket.filter(item => item[0] !== key);
-    bucket.push([key, value]);
-    this.storage.set(index, bucket);
+    this.storage.addNode(key, value);
   }
   // Removes the key, value pair from the hash table
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
   // Remove the key, value pair from the bucket
   remove(key) {
     const index = getIndexBelowMax(key.toString(), this.limit);
-    let bucket = this.storage.get(index);
-
-    if (bucket) {
-      bucket = bucket.filter(item => item[0] !== key);
-      this.storage.set(index, bucket);
-    }
   }
   // Fetches the value associated with the given key from the hash table
   // Fetch the bucket associated with the given key using the getIndexBelowMax function
   // Find the key, value pair inside the bucket and return the value
   retrieve(key) {
     const index = getIndexBelowMax(key.toString(), this.limit);
-    const bucket = this.storage.get(index);
-    let retrieved;
-    if (bucket) {
-      retrieved = bucket.filter(item => item[0] === key)[0];
-    }
-
-    return retrieved ? retrieved[1] : undefined;
+    return this.storage.retrieveNode(key);
   }
-}
+  }
+
+
+/* eslint-disable no-bitwise, operator-assignment */
+// This is hash function you'll be using to hash keys
+// There's some bit-shifting magic going on here, but essentially, all it is doing is performing the modulo operator
+// on the given `str` arg (the key) modded by the limit of the limited array
+// This simply ensures that the hash function always returns an index that is within the boundaries of the limited array
+
 
 module.exports = HashTable;
